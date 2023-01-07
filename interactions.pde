@@ -1,58 +1,58 @@
 void keyPressed(){
   if(key=='s'||key=='S'){
-    skey=true;
+    keys[skey]=true;
   }
   if(key=='w'||key=='W'){
-    wkey=true;
+    keys[wkey]=true;
   }
   if(key=='a'||key=='A'){
-    akey=true;
+    keys[akey]=true;
   }
   if(key=='d'||key=='D'){
-    dkey=true;
+    keys[dkey]=true;
   }
   if(keyCode==DOWN){
-    downkey=true;
+    keys[downkey]=true;
   }
   if(keyCode==UP){
-    upkey=true;
+    keys[upkey]=true;
   }
   if(keyCode==RIGHT){
-    downkey=true;
+    keys[rightkey]=true;
   }
   if(keyCode==LEFT){
-    downkey=true;
+    keys[leftkey]=true;
   }
   if(key==' '){
-    spacekey=true;
+    keys[spacekey]=true;
   }
 }
 void keyReleased(){
   if(key=='s'||key=='S'){
-    skey=false;
+    keys[skey]=false;
   }
   if(key=='w'||key=='W'){
-    wkey=false;
+    keys[wkey]=false;
   }
   if(key=='a'||key=='A'){
-    akey=false;
+    keys[akey]=false;
   }
   if(key=='d'||key=='D'){
-    dkey=false;
+    keys[dkey]=false;
   }
   if(keyCode==DOWN){
-    downkey=false;
+    keys[downkey]=false;
   }
   if(keyCode==UP){
-    upkey=false;
+    keys[upkey]=false;
   }
   if(keyCode==RIGHT){
-    downkey=false;
+    keys[rightkey]=false;
   }
   if(keyCode==LEFT){
-    downkey=false;
+    keys[leftkey]=false;
   }
   if(key==' '){
-    spacekey=false;
+    keys[spacekey]=false; 
   }
 }

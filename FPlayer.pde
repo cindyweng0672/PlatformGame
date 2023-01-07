@@ -1,29 +1,32 @@
-class FPlayer extends FBox{
-  
-  FPlayer(){
+class FPlayer extends FBox {
+  int n;
+
+  FPlayer(color c, int playerNum) {
     super(gridSize, gridSize);
     setPosition(300, 0);
-    setFillColor(red);
+    setFillColor(c);
+    n=playerNum*5;
   }
-  
-  void act(){
+
+  void act() {
     int speed=200;
     float vy=getVelocityY();
     float vx=getVelocityX();
-     if(akey){
+    if (keys[n]) {
       setVelocity(-speed, vy);
+      System.out.println(n);
     }
-    if(dkey){
+    if (keys[n+1]) {
       setVelocity(speed, vy);
     }
-    if(skey){
-      setVelocity(vx, speed);
-    }
-    if(wkey){
+    if (keys[n+2]) {
       setVelocity(vx, -speed);
     }
+    if (keys[n+3]) {
+      setVelocity(vx, speed);
+    }
   }
-  
-  void show(){
+
+  void show() {
   }
 }
