@@ -1,7 +1,7 @@
 import fisica.*; //<>//
 FWorld world; 
 
-ArrayList<FBody> terrains=new ArrayList<FBody>();
+ArrayList<FGameObject> terrains;
 
 color white=#FFFFFF;
 color black=#000000;
@@ -10,8 +10,7 @@ color green=#00ff00;
 color intersection=#402500;
 color trunk=#ab6100;
 color cyan=#00fbff;
-color orange=#ff8000;
-color red=#ed1c23;
+color red=#ff0000;
 color waterblue=#00b7ef;
 color purp=#6f3198;
 
@@ -36,11 +35,13 @@ boolean[] keys=new boolean[10];
 PImage iceblock, brick, lefttree, righttree, centertree, intersectionimg, trunkimg;
 PImage water1, water2, water3, water4;
 PImage spike;
+PImage bridge;
 
 FPlayer player, player2;
 
 void setup() {
   size(600, 600);
+  terrains=new ArrayList<FGameObject>();
   loadImages();
   loadMap(map);
   loadPlayer();
@@ -49,10 +50,7 @@ void setup() {
 void draw() {
   background(white);
   drawWorld();
-  player.act();
-  player.show();
-  player2.act();
-  player2.show();
+  actWorld();
 }
 
 void drawWorld() {
@@ -68,7 +66,16 @@ void drawWorld() {
 }
 
 void actWorld(){
-  
+  player.act();
+  player.show();
+  player2.act();
+  player2.show();
+  for(int i=0; i<terrains.size(); i++){
+    FBox b=terrains.get(i);
+    if(b instanceof FBridge){
+      ((FBridge)b).act();
+    }
+  }
 }
 
 void loadImages() {
@@ -85,6 +92,7 @@ void loadImages() {
   water3=loadImage("data/water3.png");
   water4=loadImage("data/water4.png");
   spike=loadImage("data/spike.png");
+  bridge=loadImage("data/bridge_center.png");
 }
 
 void loadPlayer() {
@@ -107,6 +115,10 @@ void loadMap(PImage map) {
         createBlocks(i, j, true, 0, iceblock, false, "ice");
       } else if (c==purp) {
         createBlocks(i, j, true, 10, spike, false, "spike");
+      }else if(c==red){
+        FBridge br=new FBridge(i*gridSize, j*gridSize);
+        terrains.add(br);
+        world.add(br);
       }else if (c==trunk) {
         createBlocks(i, j, true, 0, trunkimg, true, "trunk");
       }else if (c==intersection) {
@@ -157,15 +169,3 @@ void checkBridge(int i, int j, int start, int end) {
     return;
   }
 }
-
-/*void checkWater(int i){
- if(i%4){
- createBlocks(i, j, true, 3, , false, "water");
- }else if(i%3){
- createBlocks(i, j, true, 3, lefttree, false, "water");
- }else if(i%2){
- createBlocks(i, j, true, 3, lefttree, false, "twater");
- }else{
- createBlocks(i, j, true, 3, lefttree, false, "tree");
- }
- }*/

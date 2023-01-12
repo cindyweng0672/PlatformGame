@@ -1,4 +1,4 @@
-class FPlayer extends FBox {
+class FPlayer extends FGameObject {
   int n;
   int live;
   int returnx;
@@ -7,8 +7,9 @@ class FPlayer extends FBox {
   float y;
 
   FPlayer(color c, int playerNum) {
-    super(gridSize, gridSize);
+    super();
     setPosition(300, 0);
+    setName("player");
     setFillColor(c);
     n=playerNum*5;
     live=3;
@@ -31,26 +32,12 @@ class FPlayer extends FBox {
     if (keys[n+3]) {
       setVelocity(vx, speed);
     }
-    checkReturn();
-    checkCollision();
+    
+    if(isTouching("spike")){
+      setPosition(100, 100);
+    }
   }
 
   void show() {
-  }
-
-  void checkCollision() {
-    ArrayList<FContact> contacts=getContacts();
-    for (int i=0; i<contacts.size(); i++) {
-      FContact fc=contacts.get(i);
-      if (fc.contains("spike")) {
-        setPosition(x, y);
-      }
-    }
-  }
-  void checkReturn() {
-    if (map.get((int)x+1, (int)y)==purp||map.get((int)x-1, (int)y)==purp) {
-      x=getX();
-      y=getY();
-    }
   }
 }
