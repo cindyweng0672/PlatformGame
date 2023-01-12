@@ -1,11 +1,17 @@
 class FPlayer extends FBox {
   int n;
+  int live;
+  int returnx;
+  int returny;
+  float x;
+  float y;
 
   FPlayer(color c, int playerNum) {
     super(gridSize, gridSize);
     setPosition(300, 0);
     setFillColor(c);
     n=playerNum*5;
+    live=3;
   }
 
   void act() {
@@ -25,8 +31,26 @@ class FPlayer extends FBox {
     if (keys[n+3]) {
       setVelocity(vx, speed);
     }
+    checkReturn();
+    checkCollision();
   }
 
   void show() {
+  }
+
+  void checkCollision() {
+    ArrayList<FContact> contacts=getContacts();
+    for (int i=0; i<contacts.size(); i++) {
+      FContact fc=contacts.get(i);
+      if (fc.contains("spike")) {
+        setPosition(x, y);
+      }
+    }
+  }
+  void checkReturn() {
+    if (map.get((int)x+1, (int)y)==purp||map.get((int)x-1, (int)y)==purp) {
+      x=getX();
+      y=getY();
+    }
   }
 }
