@@ -6,13 +6,13 @@ class FPlayer extends FGameObject {
   float x;
   float y;
 
-  FPlayer(color c, int playerNum) {
+  FPlayer(color c, int playerNum, int life) {
     super();
     setPosition(300, 0);
     setName("player");
     setFillColor(c);
     n=playerNum*5;
-    live=3;
+    live=life;
   }
 
   void act() {
@@ -35,6 +35,11 @@ class FPlayer extends FGameObject {
     
     if(isTouching("spike")){
       setPosition(100, 100);
+      live--;
+    }
+    if(isTouching("lava")){
+      setPosition(100, 100);
+      live--;
     }
   }
 

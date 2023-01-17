@@ -1,7 +1,8 @@
 import fisica.*; //<>//
-FWorld world; 
+FWorld world;
 
 ArrayList<FGameObject> terrains;
+ArrayList<FLava> lavaList;
 
 color white=#FFFFFF;
 color black=#000000;
@@ -13,10 +14,14 @@ color cyan=#00fbff;
 color red=#ff0000;
 color waterblue=#00b7ef;
 color purp=#6f3198;
+color pink=#ffa3b1;
+color yellow=#fff200;
 
 PImage map;
 int gridSize=32;
 float zoom=1.5;
+
+int count=0;
 
 int akey=0;
 int dkey=1;
@@ -36,12 +41,21 @@ PImage iceblock, brick, lefttree, righttree, centertree, intersectionimg, trunki
 PImage water1, water2, water3, water4;
 PImage spike;
 PImage bridge;
+PImage trampoline;
+
+PImage[] lavas=new PImage[6];
+
+PImage[] currentarr;
+PImage[] run=new PImage[6]; 
+PImage[] idle=new PImage[2]; 
+PImage[] jump=new PImage[1];
 
 FPlayer player, player2;
 
 void setup() {
   size(600, 600);
   terrains=new ArrayList<FGameObject>();
+  lavaList=new ArrayList<FLava>();
   loadImages();
   loadMap(map);
   loadPlayer();
@@ -55,6 +69,10 @@ void draw() {
 
 void drawWorld() {
   pushMatrix();
+  fill(black);
+  textSize(30);
+  text("red: "+player.live, 100, 100);
+  text("blue: "+player2.live, 100, 200);
   float xdistance=Math.abs(player.getX()-player2.getX());
   float ydistance=Math.abs(player.getY()-player2.getY());
   zoom=1+10/(xdistance+ydistance);
@@ -65,16 +83,14 @@ void drawWorld() {
   popMatrix();
 }
 
-void actWorld(){
+void actWorld() {
   player.act();
   player.show();
   player2.act();
   player2.show();
-  for(int i=0; i<terrains.size(); i++){
-    FBox b=terrains.get(i);
-    if(b instanceof FBridge){
-      ((FBridge)b).act();
-    }
+  for (int i=0; i<terrains.size(); i++) {
+    FGameObject t=terrains.get(i);
+    t.act();
   }
 }
 
@@ -93,11 +109,17 @@ void loadImages() {
   water4=loadImage("data/water4.png");
   spike=loadImage("data/spike.png");
   bridge=loadImage("data/bridge_center.png");
+  for (int i=0; i<6; i++) {
+    lavas[i]=loadImage("data/lava/lava"+i+".png");
+  }
+  trampoline=loadImage("data/trampline.png");
+  
+  
 }
 
 void loadPlayer() {
-  player=new FPlayer(red, 0);
-  player2=new FPlayer(blue, 1);
+  player=new FPlayer(red, 0, 5);
+  player2=new FPlayer(blue, 1, 5);
   world.add(player);
   world.add(player2);
 }
@@ -110,19 +132,26 @@ void loadMap(PImage map) {
     for (int j=0; j<map.height; j++) {
       color c=map.get(i, j);
       if (c==black) {
-        createBlocks(i, j, true, 3, brick, false, "brick");
+        createBlocks(i, j, true, 3, brick, false, "brick", 0);
       } else if (c==cyan) {
-        createBlocks(i, j, true, 0, iceblock, false, "ice");
+        createBlocks(i, j, true, 0, iceblock, false, "ice", 0);
       } else if (c==purp) {
-        createBlocks(i, j, true, 10, spike, false, "spike");
-      }else if(c==red){
+        createBlocks(i, j, true, 10, spike, false, "spike", 0);
+      } else if (c==red) {
         FBridge br=new FBridge(i*gridSize, j*gridSize);
         terrains.add(br);
         world.add(br);
+      } else if (c==pink) {
+        FLava la=new FLava(i*gridSize, j*gridSize, lavas, count);
+        count++;
+        terrains.add(la);
+        world.add(la);
+      } else if(c==yellow){
+        createBlocks(i, j, true, 0, trampoline, false, "trampoline", 3);
       }else if (c==trunk) {
-        createBlocks(i, j, true, 0, trunkimg, true, "trunk");
-      }else if (c==intersection) {
-        createBlocks(i, j, true, 0, intersectionimg, true, "intersection");
+        createBlocks(i, j, true, 0, trunkimg, true, "trunk", 0);
+      } else if (c==intersection) {
+        createBlocks(i, j, true, 0, intersectionimg, true, "intersection", 0);
       } else if (c==green) {
         checkTrees(i, j);
       }
@@ -130,42 +159,30 @@ void loadMap(PImage map) {
   }
 }
 
-void createBlocks(int i, int j, boolean isStatic, int friction, PImage img, boolean needSensor, String name) {
+void createBlocks(int i, int j, boolean isStatic, int friction, PImage img, boolean needSensor, String name, int r) {
   FBox b=new FBox(gridSize, gridSize);
   b.setPosition(gridSize*i, gridSize*j);
   b.setStatic(isStatic);
   b.setFriction(friction);
   b.attachImage(img);
   b.setSensor(needSensor);
+  b.setRestitution(r);
   b.setName(name);
   world.add(b);
 }
 
 void checkTrees(int i, int j) {
   if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
-    createBlocks(i, j, true, 3, centertree, false, "tree");
+    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
     return;
   } else if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
-    createBlocks(i, j, true, 3, centertree, false, "tree");
+    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
     return;
   } else if (map.get(i-1, j)!=green&&map.get(i+1, j)==green) {
-    createBlocks(i, j, true, 3, lefttree, false, "tree");
+    createBlocks(i, j, true, 3, lefttree, false, "tree", 0);
     return;
   } else if (map.get(i-1, j)==green&&map.get(i+1, j)!=green) {
-    createBlocks(i, j, true, 3, righttree, false, "tree");
-    return;
-  }
-}
-
-void checkBridge(int i, int j, int start, int end) {
-  if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
-    createBlocks(i, j, true, 3, centertree, false, "tree");
-    return;
-  } else if (map.get(i-1, j)!=green&&map.get(i+1, j)==green) {
-    createBlocks(i, j, true, 3, lefttree, false, "tree");
-    return;
-  } else if (map.get(i-1, j)==green&&map.get(i+1, j)!=green) {
-    createBlocks(i, j, true, 3, righttree, false, "tree");
+    createBlocks(i, j, true, 3, righttree, false, "tree", 0);
     return;
   }
 }
