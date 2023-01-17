@@ -2,7 +2,7 @@ import fisica.*; //<>//
 FWorld world;
 
 ArrayList<FGameObject> terrains;
-ArrayList<FLava> lavaList;
+ArrayList<FFancyTerrain> lavaList;
 
 color white=#FFFFFF;
 color black=#000000;
@@ -45,8 +45,8 @@ PImage trampoline;
 
 PImage[] lavas=new PImage[6];
 
-PImage[] currentarr;
-PImage[] run=new PImage[6]; 
+PImage[] action;
+PImage[] run=new PImage[3]; 
 PImage[] idle=new PImage[2]; 
 PImage[] jump=new PImage[1];
 
@@ -55,7 +55,7 @@ FPlayer player, player2;
 void setup() {
   size(600, 600);
   terrains=new ArrayList<FGameObject>();
-  lavaList=new ArrayList<FLava>();
+  lavaList=new ArrayList<FFancyTerrain>();
   loadImages();
   loadMap(map);
   loadPlayer();
@@ -75,8 +75,8 @@ void drawWorld() {
   text("blue: "+player2.live, 100, 200);
   float xdistance=Math.abs(player.getX()-player2.getX());
   float ydistance=Math.abs(player.getY()-player2.getY());
-  zoom=1+10/(xdistance+ydistance);
-  translate(-player.getX()*zoom+width/2, -player.getY()*zoom+height/2);
+  zoom=15/(xdistance+ydistance)*10+0.3;
+  translate(-abs((min(player.getX(), player2.getX()))+xdistance/2)*zoom+width/2, -abs(min(player.getY(), player2.getY())+ydistance/2)*zoom+height/2);
   scale(zoom);
   world.step();
   world.draw();
@@ -114,7 +114,17 @@ void loadImages() {
   }
   trampoline=loadImage("data/trampline.png");
   
-  
+  jump[0]=loadImage("data/character/jump0.png");
+  idle[0]=loadImage("data/character/idle0.png");
+  idle[1]=loadImage("data/character/idle1.png");
+  run[0]=loadImage("data/character/runleft0.png");
+  run[0]=loadImage("data/character/runleft0.png");
+  run[1]=loadImage("data/character/runleft1.png");
+  run[2]=loadImage("data/character/runleft2.png");
+ /* run[3]=loadImage("data/character/runright0.png");
+  run[4]=loadImage("data/character/runright1.png");
+  run[5]=loadImage("data/character/runright2.png");*/
+  action=idle;
 }
 
 void loadPlayer() {
@@ -142,7 +152,7 @@ void loadMap(PImage map) {
         terrains.add(br);
         world.add(br);
       } else if (c==pink) {
-        FLava la=new FLava(i*gridSize, j*gridSize, lavas, count);
+        FFancyTerrain la=new FFancyTerrain(i*gridSize, j*gridSize, lavas, count);
         count++;
         terrains.add(la);
         world.add(la);

@@ -1,22 +1,22 @@
-class FLava extends FGameObject{
+class FFancyTerrain extends FGameObject{
   float x, y;
-  PImage[] lavas;
+  PImage[] imgs;
   float frame;
   int life;
   
-  FLava(float x, float y, PImage[] lavas, int n){
+  FFancyTerrain(float x, float y, PImage[] imgs, int n){
     super();
     setPosition(x, y);
     setName("lava");
     setStatic(true); 
     this.x=x; 
     this.y=y;
-    this.lavas=lavas;
+    this.imgs=imgs;
     frame=n;
   }
   
   void act(){
-     attachImage(lavas[(int)frame%6]);
+     attachImage(imgs[(int)frame%6]);
      frame+=0.2;
   }
 }
