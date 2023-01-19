@@ -7,11 +7,9 @@ class FPlayer extends FGameObject {
   float y;
   int frame;
   int direction;
-  final int R=1;
-  final int L=-1;
 
   FPlayer(color c, int playerNum, int life) {
-    super();
+    super(gridSize);
     direction=R;
     setPosition(300, 0);
     setName("player");
@@ -35,7 +33,7 @@ class FPlayer extends FGameObject {
     }
 
     //collisions();
-    animate();
+    animate(frame, 5, direction, action);
   }
 
   void show() {
@@ -64,21 +62,6 @@ class FPlayer extends FGameObject {
     }
     if (abs(vy)>0.1) {
       action=jump;
-    }
-  }
-
-  void animate() {
-    if (frame>=action.length) {
-      frame=0;
-    } else {
-      if (frameCount%5==0) {
-        if (direction==L) {
-          attachImage(action[frame]);
-        } else {
-          attachImage(reverseImage(action[frame]));
-        }
-        frame++;
-      }
     }
   }
 }

@@ -5,7 +5,7 @@ class FFancyTerrain extends FGameObject{
   int life;
   
   FFancyTerrain(float x, float y, PImage[] imgs, int n){
-    super();
+    super(gridSize);
     setPosition(x, y);
     setName("lava");
     setStatic(true); 

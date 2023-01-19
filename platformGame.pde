@@ -3,6 +3,7 @@ FWorld world;
 
 ArrayList<FGameObject> terrains;
 ArrayList<FFancyTerrain> lavaList;
+ArrayList<FGameObject> enemies;
 
 color white=#FFFFFF;
 color black=#000000;
@@ -16,6 +17,8 @@ color waterblue=#00b7ef;
 color purp=#6f3198;
 color pink=#ffa3b1;
 color yellow=#fff200;
+color brown=#9c5a3c;
+color lightPurp=#b5a5d5;
 
 PImage map;
 int gridSize=32;
@@ -35,6 +38,8 @@ int upkey=7;
 int downkey=8;
 int enterkey=9;
 
+int wallCount=0;
+
 boolean[] keys=new boolean[10];
 
 PImage iceblock, brick, lefttree, righttree, centertree, intersectionimg, trunkimg;
@@ -43,12 +48,15 @@ PImage spike;
 PImage bridge;
 PImage trampoline;
 
+PImage[] thwomp=new PImage[2];
+
 PImage[] lavas=new PImage[6];
 
 PImage[] action;
-PImage[] run=new PImage[3]; 
-PImage[] idle=new PImage[2]; 
+PImage[] run=new PImage[3];
+PImage[] idle=new PImage[2];
 PImage[] jump=new PImage[1];
+PImage[] goomba =new PImage[2];
 
 FPlayer player, player2;
 
@@ -56,6 +64,7 @@ void setup() {
   size(600, 600);
   terrains=new ArrayList<FGameObject>();
   lavaList=new ArrayList<FFancyTerrain>();
+  enemies=new ArrayList<FGameObject>();
   loadImages();
   loadMap(map);
   loadPlayer();
@@ -92,6 +101,10 @@ void actWorld() {
     FGameObject t=terrains.get(i);
     t.act();
   }
+  for (int i=0; i<enemies.size(); i++) {
+    FGameObject t=enemies.get(i);
+    t.act();
+  }
 }
 
 void loadImages() {
@@ -113,7 +126,7 @@ void loadImages() {
     lavas[i]=loadImage("data/lava/lava"+i+".png");
   }
   trampoline=loadImage("data/trampline.png");
-  
+
   jump[0]=loadImage("data/character/jump0.png");
   idle[0]=loadImage("data/character/idle0.png");
   idle[1]=loadImage("data/character/idle1.png");
@@ -121,10 +134,13 @@ void loadImages() {
   run[0]=loadImage("data/character/runleft0.png");
   run[1]=loadImage("data/character/runleft1.png");
   run[2]=loadImage("data/character/runleft2.png");
- /* run[3]=loadImage("data/character/runright0.png");
-  run[4]=loadImage("data/character/runright1.png");
-  run[5]=loadImage("data/character/runright2.png");*/
+  goomba[0]=loadImage("data/goomba/goomba0.png");
+  goomba[0].resize(gridSize, gridSize);
+  goomba[1]=loadImage("data/goomba/goomba1.png");
+  goomba[1].resize(gridSize, gridSize);
   action=idle;
+  thwomp[0]=loadImage("data/thwomp/thwomp0.png");
+  thwomp[1]=loadImage("data/thwomp/thwomp1.png");
 }
 
 void loadPlayer() {
@@ -143,6 +159,14 @@ void loadMap(PImage map) {
       color c=map.get(i, j);
       if (c==black) {
         createBlocks(i, j, true, 3, brick, false, "brick", 0);
+      } else if (c==brown) {
+        wallCount++;
+        createBlocks(i, j, true, 3, brick, false, "wall", 0);
+        if (wallCount%2==1) {
+          FGoomba goombaTemp=new FGoomba(i*gridSize+gridSize*2, j*gridSize);
+          enemies.add(goombaTemp);
+          world.add(goombaTemp);
+        }
       } else if (c==cyan) {
         createBlocks(i, j, true, 0, iceblock, false, "ice", 0);
       } else if (c==purp) {
@@ -156,9 +180,17 @@ void loadMap(PImage map) {
         count++;
         terrains.add(la);
         world.add(la);
-      } else if(c==yellow){
+      } else if (c==lightPurp) {
+         int thwompi=(int) j-5;
+         /*while (map.get(i, thwompi)!=black) {
+           i--;
+         }*/
+        FThwomp th=new FThwomp(i*gridSize, j*gridSize, thwompi, thwomp);
+        //enemies.add(th);
+        //world.add(th);
+      } else if (c==yellow) {
         createBlocks(i, j, true, 0, trampoline, false, "trampoline", 3);
-      }else if (c==trunk) {
+      } else if (c==trunk) {
         createBlocks(i, j, true, 0, trunkimg, true, "trunk", 0);
       } else if (c==intersection) {
         createBlocks(i, j, true, 0, intersectionimg, true, "intersection", 0);
@@ -186,6 +218,9 @@ void checkTrees(int i, int j) {
     createBlocks(i, j, true, 3, centertree, false, "tree", 0);
     return;
   } else if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
+    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
+    return;
+  } else if (map.get(i-1, j)==green&&map.get(i+1, j)==green) {
     createBlocks(i, j, true, 3, centertree, false, "tree", 0);
     return;
   } else if (map.get(i-1, j)!=green&&map.get(i+1, j)==green) {
