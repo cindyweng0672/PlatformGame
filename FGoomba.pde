@@ -25,10 +25,10 @@ class FGoomba extends FGameObject {
   void touchingPlayer(FPlayer p) {
     if (isTouching("player")) {
       if (p.getY()<getY()-gridSize/2) {
-        enemies.remove(this);
+        goombas.remove(this);
         world.remove(this);
       } else {
-        enemies.remove(this);
+        goombas.remove(this);
         world.remove(this);
         p.live--;
       }

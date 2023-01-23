@@ -64,4 +64,9 @@ class FPlayer extends FGameObject {
       action=jump;
     }
   }
+  
+  float[] getPos(){
+    float[] arr={x, y};
+    return arr;
+  }
 }
