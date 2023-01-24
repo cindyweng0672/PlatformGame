@@ -7,6 +7,8 @@ class FPlayer extends FGameObject {
   float y;
   int frame;
   int direction;
+  boolean hitable=true;
+  int count=0;
 
   FPlayer(color c, int playerNum, int life) {
     super(gridSize);
@@ -31,8 +33,19 @@ class FPlayer extends FGameObject {
       setPosition(100, 100);
       live--;
     }
-
-    //collisions();
+    if (isTouching("hammer")) {
+      if (hitable) {
+        live--;
+        hitable=false;
+      }
+    }
+    
+    if(hitable){
+      count++;
+      if(count==200){
+        hitable=true;
+      }
+    }
     animate(frame, 5, direction, action);
   }
 
@@ -64,8 +77,8 @@ class FPlayer extends FGameObject {
       action=jump;
     }
   }
-  
-  float[] getPos(){
+
+  float[] getPos() {
     float[] arr={x, y};
     return arr;
   }

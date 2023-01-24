@@ -5,6 +5,7 @@ ArrayList<FGameObject> terrains;
 ArrayList<FFancyTerrain> lavaList;
 ArrayList<FGameObject> goombas;
 ArrayList<FThwomp> thwomps;
+ArrayList<FHammerBro> hammerbros;
 
 color white=#FFFFFF;
 color black=#000000;
@@ -21,6 +22,7 @@ color yellow=#fff200;
 color brown=#9c5a3c;
 color lightPurp=#b5a5d5;
 color grey=#b4b4b4;
+color beigeBlue=#99d9ea;
 
 PImage map;
 int gridSize=32;
@@ -41,6 +43,7 @@ int downkey=8;
 int enterkey=9;
 
 int wallCount=0;
+int hammerWallCount=0;
 
 boolean[] keys=new boolean[10];
 
@@ -59,6 +62,8 @@ PImage[] run=new PImage[3];
 PImage[] idle=new PImage[2];
 PImage[] jump=new PImage[1];
 PImage[] goomba =new PImage[2];
+PImage[] hammerbro=new PImage[2];
+PImage hammer;
 
 FPlayer player, player2;
 
@@ -68,6 +73,8 @@ void setup() {
   lavaList=new ArrayList<FFancyTerrain>();
   goombas=new ArrayList<FGameObject>();
   thwomps=new ArrayList<FThwomp>();
+  hammerbros=new ArrayList<FHammerBro>();
+
   loadImages();
   loadMap(map);
   loadPlayer();
@@ -98,22 +105,28 @@ void drawWorld() {
 void actWorld() {
   player.act();
   player.show();
-  
+
   player2.act();
   player2.show();
-  
-  for(int i=0; i<thwomps.size(); i++){
-    FThwomp th=thwomps.get(i);
-    th.act();
-  }
-  
+
   for (int i=0; i<terrains.size(); i++) {
     FGameObject t=terrains.get(i);
     t.act();
   }
+
   for (int i=0; i<goombas.size(); i++) {
     FGameObject t=goombas.get(i);
     t.act();
+  }
+
+  for (int i=0; i<thwomps.size(); i++) {
+    FThwomp th=thwomps.get(i);
+    th.act();
+  }
+
+  for (int i=0; i<hammerbros.size(); i++) {
+    FHammerBro hb=hammerbros.get(i);
+    hb.act();
   }
 }
 
@@ -136,7 +149,6 @@ void loadImages() {
     lavas[i]=loadImage("data/lava/lava"+i+".png");
   }
   trampoline=loadImage("data/trampline.png");
-
   jump[0]=loadImage("data/character/jump0.png");
   idle[0]=loadImage("data/character/idle0.png");
   idle[1]=loadImage("data/character/idle1.png");
@@ -151,6 +163,9 @@ void loadImages() {
   action=idle;
   thwomp[0]=loadImage("data/thwomp/thwomp0.png");
   thwomp[1]=loadImage("data/thwomp/thwomp1.png");
+  hammerbro[1]=loadImage("data/hammerBro/hammerbro0.png");
+  hammerbro[0]=loadImage("data/hammerBro/hammerbro1.png");
+  hammer=loadImage("data/hammerBro/hammer.png");
 }
 
 void loadPlayer() {
@@ -194,6 +209,15 @@ void loadMap(PImage map) {
         FThwomp th=new FThwomp(i*gridSize, j*gridSize, thwomp);
         thwomps.add(th);
         world.add(th);
+      } else if (c==beigeBlue) {
+        //not working (not creating new objects);
+        hammerWallCount++;
+        createBlocks(i, j, true, 3, brick, false, "wall", 0);
+        if (hammerWallCount%2==1) {
+          FHammerBro hb=new FHammerBro(i*gridSize+gridSize*2, j*gridSize, hammerbro, hammer);
+          hammerbros.add(hb);
+          world.add(hb);
+        }
       } else if (c==yellow) {
         createBlocks(i, j, true, 0, trampoline, false, "trampoline", 3);
       } else if (c==grey) {

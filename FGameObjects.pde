@@ -23,10 +23,9 @@ class FGameObject extends FBox {
   void animate(int frame, int l, int direction, PImage[] arr) {
     if (frame>=arr.length) {
       frame=0;
-      println("animate fram: "+frame);
     } else {
       if (frameCount%l==0) {
-        if (direction==L) {
+        if (direction==R) {
           attachImage(arr[frame]);
         } else {
           attachImage(reverseImage(arr[frame]));
