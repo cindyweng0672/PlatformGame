@@ -10,11 +10,11 @@ class FPlayer extends FGameObject {
   boolean hitable=true;
   int count=0;
 
-  FPlayer(color c, int playerNum, int life) {
+  FPlayer(color c, int playerNum, int life, String name) {
     super(gridSize);
     direction=L;
     setPosition(300, 0);
-    setName("player");
+    setName(name);
     setFillColor(c);
     setRotatable(false);
     n=playerNum*5;

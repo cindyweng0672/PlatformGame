@@ -14,8 +14,8 @@ class FHammerBro extends FGoomba {
 
   void act() {
     animate(frame, 2, direction, imgs);
-    touchingPlayer(player);
-    touchingPlayer(player2);
+    touchingPlayer(player, hammerbros);
+    touchingPlayer(player2, hammerbros);
     if (isTouching("wall")) {
       direction*=-1;
       setPosition(getX()+direction, getY());
@@ -26,13 +26,13 @@ class FHammerBro extends FGoomba {
     throwHammers(img);
   }
 
-  void touchingPlayer(FPlayer p) {
+  /*void touchingPlayer(FPlayer p) {
     if (isTouching("player")) {
       hammerbros.remove(this);
       world.remove(this);
       p.live--;
     }
-  }
+  }*/
 
   void throwHammers(PImage img) {
     count++;

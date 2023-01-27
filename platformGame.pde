@@ -4,13 +4,13 @@ FWorld world;
 final int INTRO=0;
 final int PLAY=1;
 final int GAMEOVER=2;
-int mode=GAMEOVER;
+int mode=PLAY;
 
 ArrayList<FGameObject> terrains;
 ArrayList<FFancyTerrain> lavaList;
-ArrayList<FGameObject> goombas;
+ArrayList<FGoomba> goombas;
 ArrayList<FThwomp> thwomps;
-ArrayList<FHammerBro> hammerbros;
+ArrayList<FGoomba> hammerbros;
 
 ArrayList<Gif> gif=new ArrayList<Gif>();
 ArrayList<Button> myButton=new ArrayList<Button>();
@@ -86,9 +86,9 @@ void setup() {
   size(600, 600);
   terrains=new ArrayList<FGameObject>();
   lavaList=new ArrayList<FFancyTerrain>();
-  goombas=new ArrayList<FGameObject>();
+  goombas=new ArrayList<FGoomba>();
   thwomps=new ArrayList<FThwomp>();
-  hammerbros=new ArrayList<FHammerBro>();
+  hammerbros=new ArrayList<FGoomba>();
 
   gif.add(new Gif("mario_gif", "frame_", "_delay-0.1s.gif", 36, 0, 0, width, height, 4));
   myButton.add(new Button("Start", width/2, height/2+100, 100, 50, yellow, green));

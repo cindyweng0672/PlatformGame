@@ -12,8 +12,8 @@ class FGoomba extends FGameObject {
 
   void act() {
     animate(frame, 2, direction, goomba);
-    touchingPlayer(player);
-    touchingPlayer(player2);
+    touchingPlayer(player, goombas);
+    touchingPlayer(player2, goombas);
     if (isTouching("wall")) {
       direction*=-1;
       setPosition(getX()+direction, getY());
@@ -22,13 +22,13 @@ class FGoomba extends FGameObject {
     setVelocity(speed*direction, vy);
   }
 
-  void touchingPlayer(FPlayer p) {
+  void touchingPlayer(FPlayer p, ArrayList<FGoomba> list) {
     if (isTouching("player")) {
       if (p.getY()<getY()-gridSize/2) {
-        goombas.remove(this);
+        list.remove(this);
         world.remove(this);
       } else {
-        goombas.remove(this);
+        list.remove(this);
         world.remove(this);
         p.live--;
       }

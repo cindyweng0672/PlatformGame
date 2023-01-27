@@ -11,13 +11,13 @@ void drawWorld() {
   text("player1: ", 100, 100);
 
   for (int i=0; i<player.live; i++) {
-    image(heart, 150+i*20, 80);
+    image(heart, 200+i*20, 80);
   }
 
   text("player2: ", 100, 200);
 
   for (int i=0; i<player2.live; i++) {
-    image(heart, 150+i*20, 180);
+    image(heart, 200+i*20, 180);
   }
 
   float xdistance=Math.abs(player.getX()-player2.getX());
@@ -53,18 +53,22 @@ void actWorld() {
   }
 
   for (int i=0; i<hammerbros.size(); i++) {
-    FHammerBro hb=hammerbros.get(i);
+    FGoomba hb=hammerbros.get(i);
     hb.act();
   }
   
   if(player.live<=0){
     player1win=true;
   }
+  
+  if(player.live<1||player2.live<1){
+    mode=GAMEOVER;
+  }
 }
 
 void loadPlayer() {
-  player=new FPlayer(red, 0, 5);
-  player2=new FPlayer(blue, 1, 5);
+  player=new FPlayer(red, 0, 5, "player");
+  player2=new FPlayer(blue, 1, 5, "player");
   world.add(player);
   world.add(player2);
 }
