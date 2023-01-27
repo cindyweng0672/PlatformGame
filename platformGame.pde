@@ -1,11 +1,19 @@
 import fisica.*; //<>// //<>//
 FWorld world;
 
+final int INTRO=0;
+final int PLAY=1;
+final int GAMEOVER=2;
+int mode=GAMEOVER;
+
 ArrayList<FGameObject> terrains;
 ArrayList<FFancyTerrain> lavaList;
 ArrayList<FGameObject> goombas;
 ArrayList<FThwomp> thwomps;
 ArrayList<FHammerBro> hammerbros;
+
+ArrayList<Gif> gif=new ArrayList<Gif>();
+ArrayList<Button> myButton=new ArrayList<Button>();
 
 color white=#FFFFFF;
 color black=#000000;
@@ -25,6 +33,7 @@ color grey=#b4b4b4;
 color beigeBlue=#99d9ea;
 
 PImage map;
+PImage heart;
 int gridSize=32;
 float zoom=1.5;
 
@@ -57,6 +66,8 @@ PImage[] thwomp=new PImage[2];
 
 PImage[] lavas=new PImage[6];
 
+PImage[] marioGif=new PImage[4];
+
 PImage[] action;
 PImage[] run=new PImage[3];
 PImage[] idle=new PImage[2];
@@ -64,6 +75,10 @@ PImage[] jump=new PImage[1];
 PImage[] goomba =new PImage[2];
 PImage[] hammerbro=new PImage[2];
 PImage hammer;
+
+boolean mouseReleased=false;
+boolean wasPressed=false;
+boolean player1win=false;
 
 FPlayer player, player2;
 
@@ -75,58 +90,25 @@ void setup() {
   thwomps=new ArrayList<FThwomp>();
   hammerbros=new ArrayList<FHammerBro>();
 
+  gif.add(new Gif("mario_gif", "frame_", "_delay-0.1s.gif", 36, 0, 0, width, height, 4));
+  myButton.add(new Button("Start", width/2, height/2+100, 100, 50, yellow, green));
+  myButton.add(new Button("Replay", width/2, height/2+100, 100, 50, yellow, green));
+
   loadImages();
   loadMap(map);
   loadPlayer();
 }
 
 void draw() {
+  click();
+  
   background(white);
-  drawWorld();
-  actWorld();
-}
-
-void drawWorld() {
-  pushMatrix();
-  fill(black);
-  textSize(30);
-  text("red: "+player.live, 100, 100);
-  text("blue: "+player2.live, 100, 200);
-  float xdistance=Math.abs(player.getX()-player2.getX());
-  float ydistance=Math.abs(player.getY()-player2.getY());
-  zoom=15/(xdistance+ydistance)*10+0.3;
-  translate(-abs((min(player.getX(), player2.getX()))+xdistance/2)*zoom+width/2, -abs(min(player.getY(), player2.getY())+ydistance/2)*zoom+height/2);
-  scale(zoom);
-  world.step();
-  world.draw();
-  popMatrix();
-}
-
-void actWorld() {
-  player.act();
-  player.show();
-
-  player2.act();
-  player2.show();
-
-  for (int i=0; i<terrains.size(); i++) {
-    FGameObject t=terrains.get(i);
-    t.act();
-  }
-
-  for (int i=0; i<goombas.size(); i++) {
-    FGameObject t=goombas.get(i);
-    t.act();
-  }
-
-  for (int i=0; i<thwomps.size(); i++) {
-    FThwomp th=thwomps.get(i);
-    th.act();
-  }
-
-  for (int i=0; i<hammerbros.size(); i++) {
-    FHammerBro hb=hammerbros.get(i);
-    hb.act();
+  if (mode==PLAY) {
+    play();
+  } else if (mode==INTRO) {
+    intro();
+  } else if (mode==GAMEOVER) {
+    gameover();
   }
 }
 
@@ -152,10 +134,9 @@ void loadImages() {
   jump[0]=loadImage("data/character/jump0.png");
   idle[0]=loadImage("data/character/idle0.png");
   idle[1]=loadImage("data/character/idle1.png");
-  run[0]=loadImage("data/character/runleft0.png");
-  run[0]=loadImage("data/character/runleft0.png");
-  run[1]=loadImage("data/character/runleft1.png");
-  run[2]=loadImage("data/character/runleft2.png");
+  run[0]=loadImage("data/character/runright0.png");
+  run[1]=loadImage("data/character/runright1.png");
+  run[2]=loadImage("data/character/runright2.png");
   goomba[0]=loadImage("data/goomba/goomba0.png");
   goomba[0].resize(gridSize, gridSize);
   goomba[1]=loadImage("data/goomba/goomba1.png");
@@ -166,109 +147,11 @@ void loadImages() {
   hammerbro[1]=loadImage("data/hammerBro/hammerbro0.png");
   hammerbro[0]=loadImage("data/hammerBro/hammerbro1.png");
   hammer=loadImage("data/hammerBro/hammer.png");
-}
-
-void loadPlayer() {
-  player=new FPlayer(red, 0, 5);
-  player2=new FPlayer(blue, 1, 5);
-  world.add(player);
-  world.add(player2);
-}
-
-void loadMap(PImage map) {
-  Fisica.init(this);
-  world=new FWorld(-2000, -2000, 2000, 2000);
-  world.setGravity(0, 900);
-  for (int i=0; i<map.width; i++) {
-    for (int j=0; j<map.height; j++) {
-      color c=map.get(i, j);
-      if (c==black) {
-        createBlocks(i, j, true, 3, brick, false, "brick", 0);
-      } else if (c==brown) {
-        wallCount++;
-        createBlocks(i, j, true, 3, brick, false, "wall", 0);
-        if (wallCount%2==1) {
-          FGoomba goombaTemp=new FGoomba(i*gridSize+gridSize*2, j*gridSize);
-          goombas.add(goombaTemp);
-          world.add(goombaTemp);
-        }
-      } else if (c==cyan) {
-        createBlocks(i, j, true, 0, iceblock, false, "ice", 0);
-      } else if (c==purp) {
-        createBlocks(i, j, true, 10, spike, false, "spike", 0);
-      } else if (c==red) {
-        FBridge br=new FBridge(i*gridSize, j*gridSize);
-        terrains.add(br);
-        world.add(br);
-      } else if (c==pink) {
-        FFancyTerrain la=new FFancyTerrain(i*gridSize, j*gridSize, lavas, count);
-        count++;
-        terrains.add(la);
-        world.add(la);
-      } else if (c==lightPurp) {
-        FThwomp th=new FThwomp(i*gridSize, j*gridSize, thwomp);
-        thwomps.add(th);
-        world.add(th);
-      } else if (c==beigeBlue) {
-        //not working (not creating new objects);
-        hammerWallCount++;
-        createBlocks(i, j, true, 3, brick, false, "wall", 0);
-        if (hammerWallCount%2==1) {
-          FHammerBro hb=new FHammerBro(i*gridSize+gridSize*2, j*gridSize, hammerbro, hammer);
-          hammerbros.add(hb);
-          world.add(hb);
-        }
-      } else if (c==yellow) {
-        createBlocks(i, j, true, 0, trampoline, false, "trampoline", 3);
-      } else if (c==grey) {
-        createBlocks(i, j, white, true, "thwopdetect");
-      } else if (c==trunk) {
-        createBlocks(i, j, true, 0, trunkimg, true, "trunk", 0);
-      } else if (c==intersection) {
-        createBlocks(i, j, true, 0, intersectionimg, true, "intersection", 0);
-      } else if (c==green) {
-        checkTrees(i, j);
-      }
-    }
-  }
-}
-
-void createBlocks(int i, int j, boolean isStatic, int friction, PImage img, boolean needSensor, String name, int r) {
-  FBox b=new FBox(gridSize, gridSize);
-  b.setPosition(gridSize*i, gridSize*j);
-  b.setStatic(isStatic);
-  b.setFriction(friction);
-  b.attachImage(img);
-  b.setSensor(needSensor);
-  b.setRestitution(r);
-  b.setName(name);
-  world.add(b);
-}
-
-void createBlocks(int i, int j, color c, boolean sensor, String name) {
-  FBox b=new FBox(gridSize, gridSize);
-  b.setPosition(gridSize*i, gridSize*j);
-  b.setFillColor(c);
-  b.setSensor(sensor);
-  b.setName(name);
-  world.add(b);
-}
-
-void checkTrees(int i, int j) {
-  if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
-    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
-    return;
-  } else if (map.get(i-1, j)==intersection||map.get(i+1, j)==intersection) {
-    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
-    return;
-  } else if (map.get(i-1, j)==green&&map.get(i+1, j)==green) {
-    createBlocks(i, j, true, 3, centertree, false, "tree", 0);
-    return;
-  } else if (map.get(i-1, j)!=green&&map.get(i+1, j)==green) {
-    createBlocks(i, j, true, 3, lefttree, false, "tree", 0);
-    return;
-  } else if (map.get(i-1, j)==green&&map.get(i+1, j)!=green) {
-    createBlocks(i, j, true, 3, righttree, false, "tree", 0);
-    return;
-  }
+  marioGif[0]=loadImage ("data/mario_gif/frame_0_delay-0.1s.gif");
+  marioGif[1]=loadImage ("data/mario_gif/frame_1_delay-0.1s.gif");
+  marioGif[2]=loadImage ("data/mario_gif/frame_2_delay-0.1s.gif");
+  marioGif[3]=loadImage ("data/mario_gif/frame_3_delay-0.1s.gif");
+  
+  heart=loadImage("data/heart.png");
+  heart.resize(30, 30);
 }

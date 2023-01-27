@@ -26,9 +26,9 @@ class FGameObject extends FBox {
     } else {
       if (frameCount%l==0) {
         if (direction==R) {
-          attachImage(arr[frame]);
-        } else {
           attachImage(reverseImage(arr[frame]));
+        }else {
+          attachImage((arr[frame]));
         }
         frame++;
       }

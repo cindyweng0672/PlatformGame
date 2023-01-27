@@ -12,7 +12,7 @@ class FPlayer extends FGameObject {
 
   FPlayer(color c, int playerNum, int life) {
     super(gridSize);
-    direction=R;
+    direction=L;
     setPosition(300, 0);
     setName("player");
     setFillColor(c);

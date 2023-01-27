@@ -22,16 +22,15 @@ class FHammerBro extends FGoomba {
     }
     float vy=getVelocityY();
     setVelocity(speed*direction, vy);
-    
+
     throwHammers(img);
-    
   }
 
   void touchingPlayer(FPlayer p) {
     if (isTouching("player")) {
       hammerbros.remove(this);
-      p.live--;
       world.remove(this);
+      p.live--;
     }
   }
 
@@ -42,7 +41,7 @@ class FHammerBro extends FGoomba {
       b.setPosition(getX(), getY());
       b.attachImage(img);
       int vx=150;
-      if(direction==L){
+      if (direction==L) {
         vx=-vx;
       }
       b.setVelocity(vx, -400);
