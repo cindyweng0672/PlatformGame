@@ -1,38 +1,37 @@
-class FHammerBro extends FGoomba {
-  PImage[] imgs;
-  int direction=L;
+class FHammerBro extends FGameObject {
+  int direction=R;
   int speed=50;
   int frame=0;
   PImage img;
+  FWorld currentW;
 
-  FHammerBro(int x, int y, PImage[] imgs, PImage img) {
-    super(x, y);
-    this.imgs=imgs;
+  FHammerBro(int x, int y, PImage img, FWorld w) {
+    super(gridSize);
+    setPosition(x-gridSize, y);
     this.img=img;
     setName("hammerBro");
+    currentW=w;
   }
 
   void act() {
-    animate(frame, 2, direction, imgs);
+    setVelocity(100, 0);
+    setAngularVelocity(0);
+
+    animate();
+    
     touchingPlayer(player, hammerbros);
     touchingPlayer(player2, hammerbros);
+
     if (isTouching("wall")) {
       direction*=-1;
       setPosition(getX()+direction, getY());
     }
+
     float vy=getVelocityY();
     setVelocity(speed*direction, vy);
 
     throwHammers(img);
   }
-
-  /*void touchingPlayer(FPlayer p) {
-    if (isTouching("player")) {
-      hammerbros.remove(this);
-      world.remove(this);
-      p.live--;
-    }
-  }*/
 
   void throwHammers(PImage img) {
     count++;
@@ -48,8 +47,24 @@ class FHammerBro extends FGoomba {
       b.setAngularVelocity(10);
       b.setSensor(true);
       b.setName("hammer");
-      world.add(b);
+      currentW.add(b);
       count=0;
+    }
+  }
+
+  void animate() {
+    if (frame>=hammerbro.length) {
+      frame=0;
+    }
+
+    if (frameCount%5==0) {
+      if (direction==L) {
+        PImage temp=reverseImage(hammerbro[frame]);
+        attachImage(temp);
+      } else {
+        attachImage((hammerbro[frame]));
+      }
+      frame++;
     }
   }
 }

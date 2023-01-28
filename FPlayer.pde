@@ -9,10 +9,12 @@ class FPlayer extends FGameObject {
   int direction;
   boolean hitable=true;
   int count=0;
+  boolean onSwirl=false;
+  int coinCount=0;
 
   FPlayer(color c, int playerNum, int life, String name) {
     super(gridSize);
-    direction=L;
+    direction=R;
     setPosition(300, 0);
     setName(name);
     setFillColor(c);
@@ -40,13 +42,25 @@ class FPlayer extends FGameObject {
       }
     }
     
-    if(hitable){
+    if(isTouching("coin")){
+      coinCount++;
+    }
+    if(coinCount==2){
+      live++;
+      coinCount=0;
+    }
+
+    if (hitable) {
       count++;
-      if(count==200){
+      if (count==200) {
         hitable=true;
       }
     }
-    animate(frame, 5, direction, action);
+    animate();
+
+    if (isTouching("swirl")) {
+      onSwirl=true;
+    }
   }
 
   void show() {
@@ -70,16 +84,34 @@ class FPlayer extends FGameObject {
     if (keys[n+3]) {
       setVelocity(vx, speed);
     }
-    if (abs(vy)<0.1) {
+
+    if (abs(vy)<0.5&&abs(vx)==0) {
       action=idle;
-    }
-    if (abs(vy)>0.1) {
+    } else if (abs(vy)>0.5) {
       action=jump;
+    } else {
+      action=run;
     }
   }
 
   float[] getPos() {
     float[] arr={x, y};
     return arr;
+  }
+
+  void animate() {
+    if (frame>=action.length) {
+      frame=0;
+    }
+
+    if (frameCount%5==0) {
+      if (direction==R) {
+        PImage temp=reverseImage(action[frame]);
+        attachImage(temp);
+      } else {
+        attachImage((action[frame]));
+      }
+      frame++;
+    }
   }
 }
