@@ -331,6 +331,8 @@ void drawWorld(FWorld w) {
 
 void changeRoom() {
   if (player.onSwirl&&player2.onSwirl) {
+    player.onSwirl=false;
+    player2.onSwirl=false;
     if (mode==PLAY) {
       mode=COINWORLD;
     } else if (mode==COINWORLD) {

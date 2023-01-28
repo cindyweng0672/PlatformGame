@@ -28,10 +28,6 @@ void actWorld() {
     FGameObject hb=hammerbros.get(i);
     hb.act();
   }
-  
-  for(int i=0; i<coins.size(); i++){
-    coins.get(i).act();
-  }
 
   if (player.live<=0) {
     player1win=true;
