@@ -113,7 +113,7 @@ void setup() {
 
   gif.add(new Gif("mario_gif", "frame_", "_delay-0.1s.gif", 36, 0, 0, width, height, 4));
   myButton.add(new Button("Start", width/2, height/2+100, 100, 50, yellow, green));
-  myButton.add(new Button("Replay", width/2, height/2+100, 100, 50, yellow, green));
+  myButton.add(new Button("Exist", width/2, height/2+100, 100, 50, yellow, green));
 
   loadImages();
   loadMap(map, world);

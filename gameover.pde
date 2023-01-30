@@ -6,9 +6,10 @@ void gameover() {
   myButton.get(1).show();
 
   if (myButton.get(1).clicked) {
-    mode=PLAY;
+    /*mode=PLAY;
     player.live=5;
-    player2.live=5;
+    player2.live=5;*/
+    exit();
   }
 
   textFont(pixelFont);
