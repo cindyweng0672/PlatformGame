@@ -2,6 +2,7 @@ void play() {
   drawWorld(world);
   actWorld();
 }
+
 void actWorld() {
   player.act();
   player.show();
@@ -29,12 +30,13 @@ void actWorld() {
     hb.act();
   }
 
-  if (player.live<=0) {
-    player1win=true;
-  }
-
   if (player.live<1||player2.live<1) {
     mode=GAMEOVER;
   }
-  changeRoom();
+
+  if (player.onSwirl&&player2.onSwirl) {
+    mode=COINWORLD;
+    player.onSwirl=false;
+    player2.onSwirl=false;
+  }
 }

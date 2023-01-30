@@ -23,6 +23,7 @@ class FThwomp extends FGameObject {
       count++;
       if (count>=300) {
         count=0;
+        hitable=true;
         setPosition(x+gridSize/2, y+gridSize/2);
         setStatic(true);
         attachImage(imgs[0]);

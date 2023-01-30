@@ -10,6 +10,7 @@ class FPlayer extends FGameObject {
   boolean hitable=true;
   int count=0;
   boolean onSwirl=false;
+  boolean onSwirl2=false;
   int coinCount=0;
 
   FPlayer(color c, int playerNum, int life, String name) {
@@ -41,11 +42,11 @@ class FPlayer extends FGameObject {
         hitable=false;
       }
     }
-    
-    if(isTouching("coin")){
+
+    if (isTouching("coin")) {
       coinCount++;
     }
-    if(coinCount==2){
+    if (coinCount==2) {
       live++;
       coinCount=0;
     }
@@ -61,7 +62,13 @@ class FPlayer extends FGameObject {
     if (isTouching("swirl")) {
       onSwirl=true;
     }
+
+
+    if (isTouching("swirl2")) {
+      onSwirl2=true;
+    }
   }
+
 
   void show() {
   }

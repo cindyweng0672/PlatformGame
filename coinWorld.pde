@@ -1,7 +1,11 @@
-void coinWorld() {
-  background(black);
+void coinWorld() { //<>//
   drawWorld(coinWorld);
   actCoinWorld();
+  if (player.onSwirl2&&player2.onSwirl2) {
+    mode=GAMEOVER;
+    player.onSwirl2=false;
+    player2.onSwirl2=false;
+  }
 }
 
 void actCoinWorld() {
@@ -14,6 +18,4 @@ void actCoinWorld() {
   for (int i=0; i<coins.size(); i++) {
     coins.get(i).act();
   }
-
-  changeRoom();
 }

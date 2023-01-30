@@ -14,9 +14,11 @@ void gameover() {
   textFont(pixelFont);
   textSize(50);
   textAlign(CENTER);
-  if (!player1win) {
+  if (player.live>player2.live) {
     text("WINNER Player 1", width/2, height/2-50);
-  } else {
+  } else if (player.live<player2.live) {
     text("WINNER Player 2", width/2, height/2-50);
+  } else {
+    text("TIE", width/2, height/2-50);
   }
 }

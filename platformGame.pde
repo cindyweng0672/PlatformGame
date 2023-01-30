@@ -6,7 +6,7 @@ final int INTRO=0;
 final int PLAY=1;
 final int GAMEOVER=2;
 final int COINWORLD=3;
-int mode=COINWORLD;
+int mode=INTRO;
 
 ArrayList<FGameObject> terrains;
 ArrayList<FFancyTerrain> lavaList;
@@ -90,7 +90,6 @@ PImage coinImg;
 
 boolean mouseReleased=false;
 boolean wasPressed=false;
-boolean player1win=false;
 
 FPlayer player, player2;
 
@@ -230,6 +229,8 @@ void loadMap(PImage m, FWorld w) {
         w.add(th);
       } else if (c==darkBlue) {
         createBlocks(gridSize*2, i, j, true, 20, swirl, true, "swirl", 0, w);
+      } else if (c==waterblue) {
+        createBlocks(gridSize*2, i, j, true, 20, swirl, true, "swirl2", 0, w);
       } else if (c==beigeBlue) {
         hammerWallCount++;
         createBlocks(gridSize, i, j, true, 3, brick, false, "wall", 0, w);
@@ -327,16 +328,4 @@ void drawWorld(FWorld w) {
   w.step();
   w.draw();
   popMatrix();
-}
-
-void changeRoom() {
-  if (player.onSwirl&&player2.onSwirl) {
-    player.onSwirl=false;
-    player2.onSwirl=false;
-    if (mode==PLAY) {
-      mode=COINWORLD;
-    } else if (mode==COINWORLD) {
-      mode=PLAY;
-    }
-  }
 }
